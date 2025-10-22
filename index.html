@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Chat Belajar & Online</title>
+  <style>
+    body { font-family: Arial; background: #f5f5f5; display:flex; justify-content:center; align-items:center; height:100vh; }
+    .chat-container { width:400px; background:#fff; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); display:flex; flex-direction:column; overflow:hidden; }
+    .chat-box { flex:1; padding:15px; overflow-y:auto; }
+    .message { margin:8px 0; padding:10px; border-radius:10px; max-width:75%; }
+    .user { background:#007bff; color:#fff; align-self:flex-end; }
+    .ai { background:#e9ecef; align-self:flex-start; }
+    .input-area { display:flex; border-top:1px solid #ddd; }
+    input { flex:1; border:none; padding:10px; font-size:16px; }
+    button { border:none; background:#007bff; color:white; padding:0 20px; cursor:pointer; }
+    button:hover { background:#0056b3; }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-box" id="chatBox">
+      <div class="message ai">🤖 Halo! Aku AI Chat yang bisa belajar dan mencari info di internet.</div>
+    </div>
+    <div class="input-area">
+      <input type="text" id="userInput" placeholder="Ketik pesan..." />
+      <button onclick="sendMessage()">Kirim</button>
+    </div>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById('userInput');
+      const chatBox = document.getElementById('chatBox');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const userMsg = document.createElement('div');
+      userMsg.className = 'message user';
+      userMsg.textContent = text;
+      chatBox.appendChild(userMsg);
+
+      const res = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text })
+      });
+      const data = await res.json();
+
+      const aiMsg = document.createElement('div');
+      aiMsg.className = 'message ai';
+      aiMsg.textContent = data.reply;
+      chatBox.appendChild(aiMsg);
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+      input.value = '';
+    }
+  </script>
+</body>
+</html>
